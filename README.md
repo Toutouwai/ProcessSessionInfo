@@ -19,7 +19,8 @@ If you have already set `$config->sessionHistory` to a higher number then you ca
 
 3\. If you want to be able to see the IP address and/or user agent for active sessions then visit the module config page for Session Extras and tick the relevant checkboxes.
 
-![session-info-2](https://github.com/Toutouwai/ProcessSessionInfo/assets/1538852/494ca887-75ab-4ba7-86e5-f2f610fba088)
+![session-info-2](https://github.com/Toutouwai/ProcessSessionInfo/assets/1538852/28cf60f4-f47b-4e0b-ad93-b5480fc7e03f)
+
 
 4\. You can now view information about active sessions at Access > Sessions.
 
@@ -27,9 +28,9 @@ If you have already set `$config->sessionHistory` to a higher number then you ca
 
 With `$config->sessionHistory` set to 1 or higher:
 
-![session-info-1](https://github.com/Toutouwai/ProcessSessionInfo/assets/1538852/1e76706d-5cee-4b16-8c52-4df7e0b1b5f0)
+![session-info-1](https://github.com/Toutouwai/ProcessSessionInfo/assets/1538852/c6223869-eeaf-4214-ae58-85838e50483d)
 
 
 Additional information is listed when IP address and user agent tracking are enabled in Session Extras:
 
-![session-info-3](https://github.com/Toutouwai/ProcessSessionInfo/assets/1538852/ec0f8c87-33b8-4c93-aeb3-caab586ae125)
+![session-info-3](https://github.com/Toutouwai/ProcessSessionInfo/assets/1538852/d7647e81-050a-4a9a-825f-6852cd3f20a4)
