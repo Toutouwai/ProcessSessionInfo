@@ -1,0 +1,10 @@
+table.AdminDataTable td {
+  white-space: nowrap; }
+table.AdminDataTable td.psi-page {
+  white-space: normal;
+  word-wrap: break-word;
+  width: 99%; }
+table.AdminDataTable td.psi-ua {
+  white-space: normal; }
+table.AdminDataTable.track-ua td.psi-page {
+  width: 38%; }

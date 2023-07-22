@@ -8,13 +8,10 @@ $info = array(
 	'href' => 'https://github.com/Toutouwai/ProcessSessionInfo',
 	'icon' => 'tachometer',
 	'requires' => 'ProcessWire>=3.0.0, PHP>=7.0.0',
+	'installs' => 'SessionExtras',
 	'page' => array(
 		'name' => 'session-info',
 		'title' => 'Sessions',
 		'parent' => 'access',
-	),
-	'permission' => 'process-session-info',
-	'permissions' => array(
-		'process-session-info' => 'Use the Session Info module'
 	),
 );

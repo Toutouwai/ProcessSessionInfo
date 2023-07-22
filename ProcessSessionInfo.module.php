@@ -44,6 +44,7 @@ class ProcessSessionInfo extends Process {
 		$field->attr('value', $mins);
 		$field->label = sprintf($this->_n('Sessions active in last minute', 'Sessions active in last %d minutes', $mins), $mins);
 		$field->description = $this->_('Number of minutes');
+		$field->inputType = 'number';
 		$field->collapsed = Inputfield::collapsedYes;
 		$form->add($field);
 
@@ -80,7 +81,9 @@ class ProcessSessionInfo extends Process {
 			if($show_page) {
 				$history = $info['Session']['_user']['history'] ?? [];
 				$history = reset($history);
-				$result['page'] = $history['url'] ?? '';
+				$url = $history['url'] ?? '';
+				if($url) $url = parse_url($url, PHP_URL_PATH);
+				$result['page'] = $url;
 			}
 			if($track_ip) $result['ip'] = $info['Session']['_user']['ip'] ?? '';
 			if($track_ua) $result['ua'] = $info['Session']['_user']['ua'] ?? '';
@@ -90,6 +93,7 @@ class ProcessSessionInfo extends Process {
 
 		/** @var MarkupAdminDataTable $table */
 		$table = $modules->get('MarkupAdminDataTable');
+		if($track_ua) $table->addClass('track-ua');
 		$table->sortable = false;
 		$header = [
 			$this->_('Time'),
@@ -109,9 +113,9 @@ class ProcessSessionInfo extends Process {
 					$result['time'],
 					$user_names[$result['user']]['name'],
 				];
-				if($show_page) $row[] = $result['page'];
+				if($show_page) $row[] = [$result['page'], 'psi-page'];
 				if($track_ip) $row[] = $result['ip'];
-				if($track_ua) $row[] = $result['ua'];
+				if($track_ua) $row[] = [$result['ua'], 'psi-ua'];
 				$table->row($row);
 			}
 			$table_out = $table->render();
@@ -121,7 +125,7 @@ class ProcessSessionInfo extends Process {
 
 		$out =
 			'<h2>' .
-			'<i id="SessionListIcon" class="fa fa-2x fa-fw fa-dashboard ui-priority-secondary"></i> ' .
+			'<i id="SessionListIcon" class="fa fa-2x fa-fw fa-tachometer ui-priority-secondary"></i> ' .
 			sprintf($this->_n('%d active session', '%d active sessions', $total), $total) .
 			'</h2>' .
 			$table_out;

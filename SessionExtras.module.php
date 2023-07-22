@@ -52,8 +52,8 @@ class SessionExtras extends WireData implements Module, ConfigurableModule {
 		$f_name = 'track_ua';
 		$f->name = $f_name;
 		$f->label = $this->_('Track user agent in session data?');
-		$f->notes = $this->_('The user agent typically contains information about the browser being used.');
 		$f->description = $description;
+		$f->notes = $this->_('The user agent typically contains information about the browser being used.');
 		$f->checked = $this->$f_name === 1 ? 'checked' : '';
 		$inputfields->add($f);
 	}
