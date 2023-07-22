@@ -29,6 +29,7 @@ With `$config->sessionHistory` set to 1 or higher:
 
 ![session-info-1](https://github.com/Toutouwai/ProcessSessionInfo/assets/1538852/1e76706d-5cee-4b16-8c52-4df7e0b1b5f0)
 
-Additional information is listed when IP and user agent tracking are enabled in Session Extras:
+
+Additional information is listed when IP address and user agent tracking are enabled in Session Extras:
 
 ![session-info-3](https://github.com/Toutouwai/ProcessSessionInfo/assets/1538852/ec0f8c87-33b8-4c93-aeb3-caab586ae125)
