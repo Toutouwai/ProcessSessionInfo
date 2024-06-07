@@ -69,7 +69,20 @@ class ProcessSessionInfo extends Process {
 				--$total;
 				continue;
 			}
+
+			/*
+			 * The Session class used here relies on the "feature" that unserialize() ignores all further
+			 * input when it thinks it's done as the only practical way to work out where the boundaries
+			 * are within the raw session string.
+			 *
+			 * PHP >= 8.3 will give error notices when the string given to unserialize() has trailing bytes
+			 * but seeing as these trailing bytes are expected here by design we are simply turning
+			 * error reporting off and then restoring it after the Session class has done its thing.
+			 */
+			$er = error_reporting();
+			error_reporting(0);
 			$info = \Session::unserialize($contents);
+			error_reporting($er);
 
 			$user_id = $info['Session']['_user']['id'] ?? $config->guestUserPageID;
 			if(!$user_id) continue;
