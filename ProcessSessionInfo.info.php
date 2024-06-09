@@ -3,7 +3,7 @@
 $info = array(
 	'title' => 'Session Info',
 	'summary' => 'Lists information about active sessions in a similar way to SessionHandlerDB, but for file-based sessions.',
-	'version' => '0.1.1',
+	'version' => '0.1.2',
 	'author' => 'Robin Sallis',
 	'href' => 'https://github.com/Toutouwai/ProcessSessionInfo',
 	'icon' => 'tachometer',

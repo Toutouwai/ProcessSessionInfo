@@ -1,6 +1,16 @@
 <?php
-// By Frits dot vanCampen at moxio dot com
-// https://www.php.net/manual/en/function.session-decode.php#108037
+/*
+ * Session class by Frits dot vanCampen at moxio dot com
+ * https://www.php.net/manual/en/function.session-decode.php#108037
+ *
+ * This class relies on the "feature" that unserialize() ignores all further input when
+ * it thinks it's done as the only practical way to work out where the boundaries
+ * are within the raw session string.
+ *
+ * PHP >= 8.3 will give error notices when the string given to unserialize() has trailing bytes
+ * but seeing as these trailing bytes are expected here by design we are suppressing the
+ * notices with the @ operator before unserialize().
+ */
 class Session {
 	public static function unserialize($session_data) {
 		$method = ini_get("session.serialize_handler");
@@ -27,7 +37,8 @@ class Session {
 			$num = $pos - $offset;
 			$varname = substr($session_data, $offset, $num);
 			$offset += $num + 1;
-			$data = unserialize(substr($session_data, $offset));
+			// Suppress warning notice that occurs in PHP >= 8.3
+			$data = @unserialize(substr($session_data, $offset));
 			$return_data[$varname] = $data;
 			$offset += strlen(serialize($data));
 		}
@@ -42,7 +53,8 @@ class Session {
 			$offset += 1;
 			$varname = substr($session_data, $offset, $num);
 			$offset += $num;
-			$data = unserialize(substr($session_data, $offset));
+			// Suppress warning notice that occurs in PHP >= 8.3
+			$data = @unserialize(substr($session_data, $offset));
 			$return_data[$varname] = $data;
 			$offset += strlen(serialize($data));
 		}
