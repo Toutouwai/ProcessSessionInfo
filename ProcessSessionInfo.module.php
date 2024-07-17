@@ -95,6 +95,7 @@ class ProcessSessionInfo extends Process {
 		$table = $modules->get('MarkupAdminDataTable');
 		if($track_ua) $table->addClass('track-ua');
 		$table->sortable = false;
+		$table->setEncodeEntities(false);
 		$header = [
 			$this->_('Time'),
 			$this->_('User'),
@@ -111,7 +112,7 @@ class ProcessSessionInfo extends Process {
 			foreach($results as $result) {
 				$row = [
 					$result['time'],
-					$user_names[$result['user']]['name'],
+					"<a href='{$config->urls->admin}access/users/edit/?id={$result['user']}'>{$user_names[$result['user']]['name']}</a>"
 				];
 				if($show_page) $row[] = [$result['page'], 'psi-page'];
 				if($track_ip) $row[] = $result['ip'];
