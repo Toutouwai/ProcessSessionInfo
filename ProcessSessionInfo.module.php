@@ -8,15 +8,27 @@ class ProcessSessionInfo extends Process {
 	 * Much of this is the same as the core ProcessSessionDB::execute()
 	 */
 	public function ___execute() {
-		require_once $this->wire()->config->paths->$this . 'Session.php';
-
 		$modules = $this->wire()->modules;
 		$config = $this->wire()->config;
 		$session = $this->wire()->session;
 		$input = $this->wire()->input;
 		$pages = $this->wire()->pages;
 		$files = $this->wire()->files;
-		
+
+		require_once $this->wire()->config->paths->$this . 'Session.php';
+
+		// Load Vex
+		$this->wire()->modules->get('JqueryUI')->use('vex');
+
+		// JS config
+		$data = [
+			'labels' => [
+				'confirm_logout' => $this->_('Are you sure you want to force the logout of user'),
+			],
+		];
+		$config->js($this->className, $data);
+
+		// Extras
 		$track_ip = false;
 		$track_ua = false;
 		if($modules->isInstalled('SessionExtras')) {
@@ -103,6 +115,7 @@ class ProcessSessionInfo extends Process {
 		if($show_page) $header[] = $this->_('Page');
 		if($track_ip) $header[] = $this->_('IP Addr');
 		if($track_ua) $header[] = $this->_('User Agent');
+		$header[] = $this->_('Force logout');
 		$table->headerRow($header);
 
 		$user_ids_str = implode('|', $user_ids);
@@ -110,13 +123,20 @@ class ProcessSessionInfo extends Process {
 
 		if($results) {
 			foreach($results as $result) {
+				$user_name = $user_names[$result['user']]['name'];
 				$row = [
 					$result['time'],
-					"<a href='{$config->urls->admin}access/users/edit/?id={$result['user']}'>{$user_names[$result['user']]['name']}</a>"
+					"<a href='{$config->urls->admin}access/users/edit/?id={$result['user']}'>$user_name</a>"
 				];
 				if($show_page) $row[] = [$result['page'], 'psi-page'];
 				if($track_ip) $row[] = $result['ip'];
 				if($track_ua) $row[] = [$result['ua'], 'psi-ua'];
+				if($result['user'] === $config->guestUserPageID) {
+					$force_logout = '';
+				} else {
+					$force_logout = "<a class='force-logout' href='{$this->wire()->page->url}force-logout/?user={$result['user']}&name=$user_name'><i class='fa fa-sign-out'></i></a>";
+				}
+				$row[] = $force_logout;
 				$table->row($row);
 			}
 			$table_out = $table->render();
@@ -147,6 +167,40 @@ class ProcessSessionInfo extends Process {
 		$form->add($submit);
 
 		return $form->render();
+	}
+
+	/**
+	 * Force the logout of a user
+	 */
+	public function ___executeForceLogout() {
+		$files = $this->wire()->files;
+		$session = $this->wire()->session;
+		$redirect = $this->wire()->page->url;
+
+		require_once $this->wire()->config->paths->$this . 'Session.php';
+
+		// There must be a user ID and it must not be the guest user ID
+		$user_id = (int) $this->wire()->input->get('user');
+		$name = $this->wire()->input->get->text('name');
+		if(!$user_id || $user_id === $this->wire()->config->guestUserPageID) {
+			$session->location($redirect);
+		}
+
+		// Loop over session files until we find the one for the user, then delete it
+		$path = rtrim(session_save_path(), '/') . '/';
+		$session_files = $files->find($path, ['returnRelative' => true]);
+		foreach($session_files as $file) {
+			if(substr($file, 0, 5) !== 'sess_') continue;
+			$filepath = $path . $file;
+			$contents = @$files->fileGetContents($filepath);
+			if(!$contents) continue;
+			$info = \Session::unserialize($contents);
+			if(!isset($info['Session']['_user']['id']) || $info['Session']['_user']['id'] !== $user_id) continue;
+			$files->unlink($filepath);
+			$session->message(sprintf($this->_('User "%s" has been logged out.'), $name));
+			$session->location($redirect);
+			break;
+		}
 	}
 
 }

@@ -3,7 +3,7 @@
 $info = array(
 	'title' => 'Session Extras',
 	'summary' => 'Optionally saves extra data to sessions that can be displayed by the Session Info module.',
-	'version' => '0.1.3',
+	'version' => '0.2.0',
 	'author' => 'Robin Sallis',
 	'href' => 'https://github.com/Toutouwai/ProcessSessionInfo',
 	'icon' => 'tachometer',
