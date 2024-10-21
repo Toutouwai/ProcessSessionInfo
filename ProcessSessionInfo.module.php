@@ -123,7 +123,8 @@ class ProcessSessionInfo extends Process {
 
 		if($results) {
 			foreach($results as $result) {
-				$user_name = $user_names[$result['user']]['name'];
+				$user_name = $user_names[$result['user']]['name'] ?? '';
+				if(!$user_name) continue;
 				$row = [
 					$result['time'],
 					"<a href='{$config->urls->admin}access/users/edit/?id={$result['user']}'>$user_name</a>"
