@@ -121,6 +121,10 @@ class ProcessSessionInfo extends Process {
 		$user_ids_str = implode('|', $user_ids);
 		$user_names = $pages->findRaw("id=$user_ids_str", ['name']);
 
+		// The force logout links carry this session's CSRF token, see ___executeForceLogout()
+		$csrf = $this->wire()->session->CSRF;
+		$token = rawurlencode($csrf->getTokenName()) . '=' . rawurlencode($csrf->getTokenValue());
+
 		if($results) {
 			foreach($results as $result) {
 				$user_name = $user_names[$result['user']]['name'] ?? '';
@@ -135,7 +139,7 @@ class ProcessSessionInfo extends Process {
 				if($result['user'] === $config->guestUserPageID) {
 					$force_logout = '';
 				} else {
-					$force_logout = "<a class='force-logout' href='{$this->wire()->page->url}force-logout/?user={$result['user']}&name=$user_name'><i class='fa fa-sign-out'></i></a>";
+					$force_logout = "<a class='force-logout' href='{$this->wire()->page->url}force-logout/?user={$result['user']}&name=$user_name&$token'><i class='fa fa-sign-out'></i></a>";
 				}
 				$row[] = $force_logout;
 				$table->row($row);
@@ -179,6 +183,16 @@ class ProcessSessionInfo extends Process {
 		$redirect = $this->wire()->page->url;
 
 		require_once $this->wire()->config->paths->$this . 'Session.php';
+
+		// The request must carry this session's CSRF token, as the links in the session list do.
+		// Without this check a link on any other website could force the logout of a user
+		// when it is followed by someone who is allowed to view this page.
+		$csrf = $session->CSRF;
+		$token = $this->wire()->input->get($csrf->getTokenName());
+		if(!is_string($token) || !hash_equals((string) $csrf->getTokenValue(), $token)) {
+			$session->error($this->_('The force logout link was not valid. Please try again.'));
+			$session->location($redirect);
+		}
 
 		// There must be a user ID and it must not be the guest user ID
 		$user_id = (int) $this->wire()->input->get('user');
